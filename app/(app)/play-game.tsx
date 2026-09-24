@@ -1,11 +1,12 @@
 /**
- * play-game.tsx — Play vs Computer Game Screen
+ * play-game.tsx — Active Chess Game Screen
  * UI/UX design by Sandith Hewage (Y STEM and Chess)
  */
 
 import { router, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
+  Animated,
   Modal,
   Pressable,
   ScrollView,
@@ -15,57 +16,86 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Button } from '@/components/ui/Button';
 import { theme } from '@/design/theme';
 import { fontSizes, fontWeights, palette, radii, spacing } from '@/design/tokens';
 
 type GameResult = 'win' | 'lose' | 'draw' | null;
 
 const MOVES = [
-  { n: 1, w: 'e4',  b: 'e5'  },
-  { n: 2, w: 'Nf3', b: 'Nc6' },
-  { n: 3, w: 'Bb5', b: 'a6'  },
-  { n: 4, w: 'Ba4', b: 'Nf6' },
-  { n: 5, w: 'O-O', b: 'Be7' },
-  { n: 6, w: 'Re1', b: 'b5'  },
-  { n: 7, w: 'Bb3' },
+  { n: 1,  w: 'e4',   b: 'e5'   },
+  { n: 2,  w: 'Nf3',  b: 'Nc6'  },
+  { n: 3,  w: 'Bb5',  b: 'a6'   },
+  { n: 4,  w: 'Ba4',  b: 'Nf6'  },
+  { n: 5,  w: 'O-O',  b: 'Be7'  },
+  { n: 6,  w: 'Re1',  b: 'b5'   },
+  { n: 7,  w: 'Bb3' },
 ];
 
+const DIFFICULTY_LABEL: Record<string, string> = {
+  beginner: '🌱 Beginner',
+  easy:     '😊 Easy',
+  medium:   '🤔 Medium',
+  hard:     '😤 Hard',
+  master:   '👑 Master',
+};
+
 function ChessBoard({ playerColor }: { playerColor: string }) {
-  const files = playerColor === 'white' ? ['a','b','c','d','e','f','g','h'] : ['h','g','f','e','d','c','b','a'];
-  const ranks = playerColor === 'white' ? [8,7,6,5,4,3,2,1]               : [1,2,3,4,5,6,7,8];
+  const files  = playerColor === 'white' ? ['a','b','c','d','e','f','g','h'] : ['h','g','f','e','d','c','b','a'];
+  const ranks  = playerColor === 'white' ? [8,7,6,5,4,3,2,1]               : [1,2,3,4,5,6,7,8];
+  const coords = playerColor === 'white' ? ['a','b','c','d','e','f','g','h'] : ['h','g','f','e','d','c','b','a'];
 
   return (
-    <View style={b.board}>
-      {ranks.map(rank => (
-        <View key={rank} style={b.rank}>
-          <View style={b.rankLabel}><Text style={b.labelText}>{rank}</Text></View>
-          {files.map((file, fi) => {
-            const hl = (file === 'e' && rank === 4) || (file === 'e' && rank === 5);
-            return (
-              <View key={file + rank} style={[
-                b.square,
-                (fi + rank) % 2 === 0 ? b.light : b.dark,
-                hl && b.hl,
-              ]} />
-            );
-          })}
+    <View style={b.wrap}>
+      {/* Rank labels */}
+      <View style={b.rankLabels}>
+        {ranks.map(r => <Text key={r} style={b.rankLabel}>{r}</Text>)}
+      </View>
+      <View style={{ flex: 1 }}>
+        {ranks.map(rank => (
+          <View key={rank} style={b.row}>
+            {files.map((file, fi) => {
+              const isHl = (file === 'e' && rank === 4) || (file === 'e' && rank === 5);
+              return (
+                <View
+                  key={file + rank}
+                  style={[
+                    b.square,
+                    (fi + rank) % 2 === 0 ? b.light : b.dark,
+                    isHl && b.highlighted,
+                  ]}
+                />
+              );
+            })}
+          </View>
+        ))}
+        {/* File labels */}
+        <View style={b.fileRow}>
+          {coords.map(f => <Text key={f} style={b.fileLabel}>{f}</Text>)}
         </View>
-      ))}
+      </View>
     </View>
   );
 }
 
-function PlayerRow({ label, isActive, time, captured }: {
-  label: string; isActive: boolean; time: string; captured?: string;
+function PlayerRow({
+  label, emoji, isActive, time, captured,
+}: {
+  label: string; emoji: string; isActive: boolean; time: string; captured?: string;
 }) {
   return (
     <View style={[p.row, isActive && p.rowActive]}>
-      <View style={p.avatar}><Text style={{ fontSize: 20 }}>{label === 'You' ? '🧑' : '🤖'}</Text></View>
-      <View style={p.info}>
-        <Text style={p.name}>{label}</Text>
-        {captured && <Text style={p.captured}>{captured}</Text>}
+      <View style={[p.avatar, isActive && p.avatarActive]}>
+        <Text style={{ fontSize: 20 }}>{emoji}</Text>
       </View>
+      <View style={p.info}>
+        <Text style={p.name} numberOfLines={1}>{label}</Text>
+        {captured ? (
+          <Text style={p.captured}>{captured}</Text>
+        ) : (
+          <Text style={p.capturedEmpty}>—</Text>
+        )}
+      </View>
+      {isActive && <View style={p.activeDot} />}
       <View style={[p.timer, isActive && p.timerActive]}>
         <Text style={[p.timerText, isActive && p.timerTextActive]}>{time}</Text>
       </View>
@@ -73,123 +103,186 @@ function PlayerRow({ label, isActive, time, captured }: {
   );
 }
 
-function GameOverModal({ result, onNewGame, onExit }: {
+function GameOverModal({
+  result, onNewGame, onExit,
+}: {
   result: GameResult; onNewGame: () => void; onExit: () => void;
 }) {
+  const scale = useRef(new Animated.Value(0.85)).current;
+
+  if (result !== null) {
+    Animated.spring(scale, { toValue: 1, useNativeDriver: true, speed: 20, bounciness: 14 }).start();
+  }
+
+  const meta = {
+    win:  { emoji: '🏆', title: 'You Win!',  body: 'Excellent play! You defeated the computer.',    xp: '+50 XP' },
+    lose: { emoji: '😓', title: 'You Lose',  body: "Don't give up — every loss is a lesson!",        xp: '+10 XP' },
+    draw: { emoji: '🤝', title: 'Draw!',     body: 'A hard-fought game. Well played by both sides.', xp: '+20 XP' },
+  };
+
+  const m = result ? meta[result] : null;
+
   return (
     <Modal animationType="fade" transparent visible={result !== null}>
-      <View style={m.overlay}>
-        <View style={m.card}>
-          <Text style={{ fontSize: 56 }}>
-            {result === 'win' ? '🏆' : result === 'draw' ? '🤝' : '😓'}
-          </Text>
-          <Text style={m.title}>
-            {result === 'win' ? 'You Win!' : result === 'draw' ? 'Draw!' : 'You Lose'}
-          </Text>
-          <Text style={m.body}>
-            {result === 'win'  ? 'Excellent play! You defeated the computer!'
-           : result === 'draw' ? 'The game ended in a draw. Good fight!'
-           :                     "Don't give up — every loss is a lesson!"}
-          </Text>
-          <Button onPress={onNewGame} variant="brand">Play Again</Button>
-          <Button onPress={onExit}    variant="secondary">Exit</Button>
-        </View>
+      <View style={mo.overlay}>
+        <Animated.View style={[mo.card, { transform: [{ scale }] }]}>
+          {m && (
+            <>
+              <Text style={mo.emoji}>{m.emoji}</Text>
+              <Text style={mo.title}>{m.title}</Text>
+              <Text style={mo.body}>{m.body}</Text>
+              <View style={mo.xpPill}>
+                <Text style={mo.xpText}>{m.xp}</Text>
+              </View>
+              <View style={mo.buttons}>
+                <Pressable
+                  onPress={onNewGame}
+                  style={({ pressed }) => [mo.btn, mo.btnPrimary, pressed && { opacity: 0.85 }]}
+                >
+                  <Text style={[mo.btnText, mo.btnTextPrimary]}>Play Again</Text>
+                </Pressable>
+                <Pressable
+                  onPress={onExit}
+                  style={({ pressed }) => [mo.btn, mo.btnSecondary, pressed && { opacity: 0.7 }]}
+                >
+                  <Text style={mo.btnText}>Exit</Text>
+                </Pressable>
+              </View>
+            </>
+          )}
+        </Animated.View>
       </View>
     </Modal>
   );
 }
 
 export default function PlayGameRoute() {
-  const { color = 'white', difficulty = 'Beginner' } = useLocalSearchParams<{ color: string; difficulty: string }>();
-  const [tutorOpen,  setTutorOpen]  = useState(true);
-  const [gameResult, setGameResult] = useState<GameResult>(null);
+  const { color = 'white', difficulty = 'beginner' } = useLocalSearchParams<{ color: string; difficulty: string }>();
+  const [tutorOpen,   setTutorOpen]   = useState(true);
+  const [gameResult,  setGameResult]  = useState<GameResult>(null);
   const isPlayerTurn = true;
+
+  const diffLabel = DIFFICULTY_LABEL[difficulty as string] ?? difficulty;
 
   return (
     <SafeAreaView style={s.safe}>
-      {/* ── Dark Top Bar ──────────────────────────── */}
-      <View style={s.topBar}>
+      {/* ── Dark Header ────────────────────────── */}
+      <View style={s.header}>
         <Pressable
           accessibilityLabel="Exit game"
           hitSlop={8}
           onPress={() => router.back()}
-          style={s.topBackBtn}
+          style={({ pressed }) => [s.headerBackBtn, pressed && { opacity: 0.6 }]}
         >
-          <Text style={s.topBackArrow}>‹</Text>
+          <Text style={s.headerBackArrow}>‹</Text>
         </Pressable>
-        <Text style={s.topTitle}>vs Computer</Text>
-        <View style={s.diffBadge}>
-          <Text style={s.diffText}>{difficulty}</Text>
+        <View style={s.headerCenter}>
+          <Text style={s.headerTitle}>vs Computer</Text>
+          <Text style={s.headerSub}>{diffLabel}</Text>
+        </View>
+        <View style={s.evalChip}>
+          <Text style={s.evalText}>+0.3</Text>
         </View>
       </View>
 
       <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
-        {/* ── Opponent ──────────────────────────────── */}
-        <PlayerRow label={`Computer (${difficulty})`} isActive={!isPlayerTurn} time="10:00" />
+        {/* ── Opponent Row ───────────────────────── */}
+        <PlayerRow
+          label={`Computer (${(difficulty as string).charAt(0).toUpperCase() + (difficulty as string).slice(1)})`}
+          emoji="🤖"
+          isActive={!isPlayerTurn}
+          time="10:00"
+        />
 
-        {/* ── Board ─────────────────────────────────── */}
-        <ChessBoard playerColor={color as string} />
+        {/* ── Board ──────────────────────────────── */}
+        <View style={s.boardWrap}>
+          <ChessBoard playerColor={color as string} />
+        </View>
 
-        {/* ── Player ────────────────────────────────── */}
-        <PlayerRow label="You" isActive={isPlayerTurn} time="9:42" captured="♙ ♙" />
+        {/* ── Player Row ─────────────────────────── */}
+        <PlayerRow
+          label="You"
+          emoji="🧑"
+          isActive={isPlayerTurn}
+          time="9:42"
+          captured="♙ ♙"
+        />
 
-        {/* ── Tutor Panel ───────────────────────────── */}
-        <View style={s.tutor}>
-          <Pressable
-            onPress={() => setTutorOpen(v => !v)}
-            style={s.tutorHeader}
-          >
+        {/* ── Tutor Panel ────────────────────────── */}
+        <View style={s.tutorCard}>
+          <Pressable onPress={() => setTutorOpen(v => !v)} style={s.tutorHeader}>
             <View style={s.tutorLeft}>
-              <Text style={{ fontSize: 18 }}>🎓</Text>
+              <View style={s.tutorIconWrap}>
+                <Text style={{ fontSize: 15 }}>🎓</Text>
+              </View>
               <Text style={s.tutorTitle}>Tutor</Text>
-              <View style={s.evalBadge}>
-                <Text style={s.evalText}>+0.3</Text>
+              <View style={s.tutorEvalBadge}>
+                <Text style={s.tutorEvalText}>+0.3</Text>
               </View>
             </View>
-            <Text style={s.tutorChevron}>{tutorOpen ? '‹' : '›'}</Text>
+            <Text style={s.tutorChevron}>{tutorOpen ? '⌃' : '⌄'}</Text>
           </Pressable>
           {tutorOpen && (
             <View style={s.tutorBody}>
+              <Text style={s.tutorOpening}>Ruy Lopez — Main Line</Text>
               <Text style={s.tutorTip}>
-                The Ruy Lopez opening. Consider castling to protect your king before attacking.
+                Consider castling kingside to protect your king before launching an attack. Your d-pawn controls the center.
               </Text>
+              <View style={s.tutorSuggestion}>
+                <Text style={s.tutorSugLabel}>💡  Best move:</Text>
+                <View style={s.tutorSugMove}>
+                  <Text style={s.tutorSugMoveText}>d4</Text>
+                </View>
+              </View>
             </View>
           )}
         </View>
 
-        {/* ── Move History ──────────────────────────── */}
-        <View style={s.movesLabel}>
-          <Text style={s.movesLabelText}>Move History</Text>
+        {/* ── Move History ───────────────────────── */}
+        <View style={s.movesSection}>
+          <Text style={s.movesLabel}>Move History</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.movesList}>
+            {MOVES.map(m => (
+              <View key={m.n} style={s.moveGroup}>
+                <Text style={s.moveNum}>{m.n}.</Text>
+                <View style={s.moveChip}>
+                  <Text style={s.moveChipText}>{m.w}</Text>
+                </View>
+                {m.b && (
+                  <View style={[s.moveChip, s.moveChipBlack]}>
+                    <Text style={[s.moveChipText, { color: palette.white }]}>{m.b}</Text>
+                  </View>
+                )}
+              </View>
+            ))}
+          </ScrollView>
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.moves}>
-          {MOVES.map(m => (
-            <View key={m.n} style={s.moveGroup}>
-              <Text style={s.moveNum}>{m.n}.</Text>
-              <View style={s.moveToken}><Text style={s.moveText}>{m.w}</Text></View>
-              {m.b && <View style={[s.moveToken, s.moveTokenBlack]}><Text style={[s.moveText, { color: palette.white }]}>{m.b}</Text></View>}
-            </View>
-          ))}
-        </ScrollView>
 
-        <View style={{ height: 16 }} />
+        <View style={{ height: spacing.md }} />
       </ScrollView>
 
-      {/* ── Controls Footer ───────────────────────── */}
+      {/* ── Controls Footer ────────────────────── */}
       <View style={s.footer}>
         {[
-          { icon: '↩', label: 'Undo',   onPress: () => {},                              style: s.ctrlBtn },
-          { icon: '⇅', label: 'Flip',   onPress: () => {},                              style: s.ctrlBtn },
-          { icon: '🤝', label: 'Draw',   onPress: () => setGameResult('draw'),           style: s.ctrlBtn },
-          { icon: '🏳', label: 'Resign', onPress: () => setGameResult('lose'),           style: [s.ctrlBtn, s.ctrlBtnResign] },
+          { icon: '↩',  label: 'Undo',   onPress: () => {},                        variant: 'normal'  as const },
+          { icon: '⇅',  label: 'Flip',   onPress: () => {},                        variant: 'normal'  as const },
+          { icon: '🤝', label: 'Draw',   onPress: () => setGameResult('draw'),     variant: 'normal'  as const },
+          { icon: '🏳', label: 'Resign', onPress: () => setGameResult('lose'),     variant: 'danger'  as const },
         ].map(item => (
           <Pressable
             key={item.label}
             accessibilityLabel={item.label}
             onPress={item.onPress}
-            style={[...(Array.isArray(item.style) ? item.style : [item.style])]}
+            style={({ pressed }) => [
+              s.ctrlBtn,
+              item.variant === 'danger' && s.ctrlBtnDanger,
+              pressed && s.ctrlBtnPressed,
+            ]}
           >
             <Text style={{ fontSize: 20 }}>{item.icon}</Text>
-            <Text style={[s.ctrlLabel, item.label === 'Resign' && s.ctrlLabelResign]}>{item.label}</Text>
+            <Text style={[s.ctrlLabel, item.variant === 'danger' && s.ctrlLabelDanger]}>
+              {item.label}
+            </Text>
           </Pressable>
         ))}
       </View>
@@ -203,87 +296,109 @@ export default function PlayGameRoute() {
   );
 }
 
+/* ── Board styles ────────────────────────── */
 const b = StyleSheet.create({
-  board:     { width: '100%', aspectRatio: 1, borderRadius: radii.sm, overflow: 'hidden' },
-  rank:      { flex: 1, flexDirection: 'row', alignItems: 'stretch' },
-  rankLabel: { width: 14, alignItems: 'center', justifyContent: 'center' },
-  labelText: { fontSize: 8, color: palette.muted, opacity: 0.6, fontWeight: fontWeights.bold },
-  square:    { flex: 1 },
-  light:     { backgroundColor: '#F0D9B5' },
-  dark:      { backgroundColor: '#B58863' },
-  hl:        { backgroundColor: 'rgba(127,204,38,0.45)' },
+  wrap:       { width: '100%', aspectRatio: 1, flexDirection: 'row' },
+  rankLabels: { justifyContent: 'space-around', paddingRight: 4, paddingBottom: 18 },
+  rankLabel:  { fontSize: 9, color: 'rgba(255,255,255,0.5)', fontWeight: fontWeights.bold, textAlign: 'center' },
+  row:        { flex: 1, flexDirection: 'row' },
+  square:     { flex: 1 },
+  light:      { backgroundColor: '#F0D9B5' },
+  dark:       { backgroundColor: '#B58863' },
+  highlighted:{ backgroundColor: 'rgba(127,204,38,0.5)' },
+  fileRow:    { flexDirection: 'row', height: 18 },
+  fileLabel:  { flex: 1, fontSize: 9, color: 'rgba(255,255,255,0.5)', fontWeight: fontWeights.bold, textAlign: 'center', paddingTop: 4 },
 });
 
+/* ── Player row styles ───────────────────── */
 const p = StyleSheet.create({
-  row:           { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, padding: spacing.xs, borderRadius: radii.md },
-  rowActive:     { backgroundColor: `${palette.brandGreen}1A` },
-  avatar:        { width: 38, height: 38, borderRadius: radii.pill, backgroundColor: palette.backgroundSoft, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: palette.border },
-  info:          { flex: 1, gap: 2 },
-  name:          { fontSize: fontSizes.caption, fontWeight: fontWeights.bold, color: palette.ink },
-  captured:      { fontSize: fontSizes.caption, color: palette.muted, letterSpacing: 2 },
-  timer:         { backgroundColor: palette.ink, paddingVertical: spacing.xs, paddingHorizontal: spacing.sm, borderRadius: radii.sm, minWidth: 60, alignItems: 'center' },
-  timerActive:   { backgroundColor: palette.brandGreen },
-  timerText:     { fontSize: fontSizes.label, fontWeight: fontWeights.bold, color: 'rgba(255,255,255,0.5)', letterSpacing: 1 },
+  row:          { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingVertical: spacing.xs, paddingHorizontal: spacing.sm, borderRadius: radii.md },
+  rowActive:    { backgroundColor: `${palette.brandGreen}18` },
+  avatar:       { width: 40, height: 40, borderRadius: radii.pill, backgroundColor: theme.colors.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: palette.border },
+  avatarActive: { borderColor: palette.brandGreen },
+  info:         { flex: 1, gap: 1 },
+  name:         { fontSize: fontSizes.caption, fontWeight: fontWeights.bold, color: palette.ink },
+  captured:     { fontSize: fontSizes.caption, color: palette.muted, letterSpacing: 2 },
+  capturedEmpty:{ fontSize: fontSizes.caption, color: palette.border },
+  activeDot:    { width: 7, height: 7, borderRadius: radii.pill, backgroundColor: palette.brandGreen },
+  timer:        { backgroundColor: palette.ink, paddingVertical: spacing.xs, paddingHorizontal: spacing.sm, borderRadius: radii.sm, minWidth: 64, alignItems: 'center' },
+  timerActive:  { backgroundColor: palette.brandGreen },
+  timerText:    { fontSize: fontSizes.label, fontWeight: fontWeights.bold, color: 'rgba(255,255,255,0.45)', letterSpacing: 1 },
   timerTextActive: { color: palette.ink },
 });
 
-const m = StyleSheet.create({
-  overlay: { flex: 1, backgroundColor: 'rgba(31,31,31,0.6)', alignItems: 'center', justifyContent: 'center', padding: spacing.lg },
+/* ── Modal styles ────────────────────────── */
+const mo = StyleSheet.create({
+  overlay: { flex: 1, backgroundColor: 'rgba(31,31,31,0.65)', alignItems: 'center', justifyContent: 'center', padding: spacing.lg },
   card: {
-    width: '100%', maxWidth: 380,
-    backgroundColor: theme.colors.surface, borderRadius: radii.lg,
+    width: '100%', maxWidth: 360,
+    backgroundColor: theme.colors.surfaceStrong, borderRadius: radii.xl,
     padding: spacing.xl, alignItems: 'center', gap: spacing.md,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.2, shadowRadius: 24, elevation: 10,
   },
-  title: { fontSize: fontSizes.heading, fontWeight: fontWeights.bold, color: palette.ink },
-  body:  { fontSize: fontSizes.body, color: palette.gray, textAlign: 'center', lineHeight: 24 },
+  emoji:         { fontSize: 60 },
+  title:         { fontSize: fontSizes.title, fontWeight: fontWeights.bold, color: palette.ink, letterSpacing: -0.5 },
+  body:          { fontSize: fontSizes.body, color: palette.gray, textAlign: 'center', lineHeight: 24 },
+  xpPill:        { backgroundColor: `${palette.accentYellow}33`, borderWidth: 1, borderColor: palette.accentYellow, paddingVertical: spacing.xxs, paddingHorizontal: spacing.lg, borderRadius: radii.pill },
+  xpText:        { fontSize: fontSizes.label, fontWeight: fontWeights.bold, color: palette.ink },
+  buttons:       { width: '100%', gap: spacing.sm },
+  btn:           { width: '100%', minHeight: 52, borderRadius: radii.pill, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5 },
+  btnPrimary:    { backgroundColor: palette.brandGreen, borderColor: palette.brandGreen },
+  btnSecondary:  { backgroundColor: 'transparent', borderColor: palette.border },
+  btnText:       { fontSize: fontSizes.label, fontWeight: fontWeights.bold, color: palette.ink },
+  btnTextPrimary:{ color: palette.ink },
 });
 
+/* ── Screen styles ───────────────────────── */
 const s = StyleSheet.create({
   safe: { flex: 1, backgroundColor: theme.colors.background },
 
-  topBar: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: spacing.lg, paddingVertical: spacing.sm,
-    backgroundColor: palette.ink,
-  },
-  topBackBtn:   { width: 34, height: 34, borderRadius: radii.pill, backgroundColor: 'rgba(255,255,255,0.1)', alignItems: 'center', justifyContent: 'center' },
-  topBackArrow: { fontSize: fontSizes.heading, color: palette.white, marginTop: -2 },
-  topTitle:     { fontSize: fontSizes.label, fontWeight: fontWeights.bold, color: palette.white },
-  diffBadge:    { backgroundColor: `${palette.brandGreen}1A`, paddingVertical: spacing.xxs, paddingHorizontal: spacing.sm, borderRadius: radii.pill },
-  diffText:     { fontSize: fontSizes.caption, fontWeight: fontWeights.bold, color: palette.brandGreen },
+  /* Header */
+  header:          { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, backgroundColor: palette.ink },
+  headerBackBtn:   { width: 36, height: 36, borderRadius: radii.pill, backgroundColor: 'rgba(255,255,255,0.1)', alignItems: 'center', justifyContent: 'center' },
+  headerBackArrow: { fontSize: fontSizes.heading, color: palette.white, marginTop: -1 },
+  headerCenter:    { flex: 1, alignItems: 'center', gap: 1 },
+  headerTitle:     { fontSize: fontSizes.label, fontWeight: fontWeights.bold, color: palette.white },
+  headerSub:       { fontSize: fontSizes.caption - 1, color: 'rgba(255,255,255,0.5)' },
+  evalChip:        { backgroundColor: `${palette.brandGreen}22`, borderWidth: 1, borderColor: `${palette.brandGreen}50`, paddingVertical: spacing.xxs, paddingHorizontal: spacing.sm, borderRadius: radii.pill },
+  evalText:        { fontSize: fontSizes.caption, fontWeight: fontWeights.bold, color: palette.brandGreen },
 
-  scroll: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, gap: spacing.md },
+  /* Scroll */
+  scroll:   { paddingHorizontal: spacing.md, paddingTop: spacing.sm, gap: spacing.sm },
+  boardWrap:{ borderRadius: radii.sm, overflow: 'hidden', backgroundColor: palette.ink },
 
-  tutor: { backgroundColor: theme.colors.surface, borderRadius: radii.sm, borderWidth: 1, borderColor: palette.border, overflow: 'hidden' },
-  tutorHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: spacing.md, backgroundColor: `${palette.accentYellow}22` },
-  tutorLeft:   { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
-  tutorTitle:  { fontSize: fontSizes.label, fontWeight: fontWeights.bold, color: palette.ink },
-  evalBadge:   { backgroundColor: `${palette.brandGreen}1A`, paddingVertical: 2, paddingHorizontal: spacing.xs, borderRadius: radii.pill },
-  evalText:    { fontSize: fontSizes.caption, fontWeight: fontWeights.bold, color: palette.brandGreen },
-  tutorChevron: { fontSize: fontSizes.heading, color: palette.muted },
-  tutorBody:    { padding: spacing.md },
-  tutorTip:     { fontSize: fontSizes.caption, color: palette.ink, lineHeight: 20 },
+  /* Tutor */
+  tutorCard:       { backgroundColor: theme.colors.surface, borderRadius: radii.md, borderWidth: 1, borderColor: palette.border, overflow: 'hidden' },
+  tutorHeader:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: spacing.md, backgroundColor: `${palette.accentYellow}18` },
+  tutorLeft:       { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  tutorIconWrap:   { width: 30, height: 30, borderRadius: radii.sm, backgroundColor: `${palette.accentYellow}30`, alignItems: 'center', justifyContent: 'center' },
+  tutorTitle:      { fontSize: fontSizes.label, fontWeight: fontWeights.bold, color: palette.ink },
+  tutorEvalBadge:  { backgroundColor: `${palette.brandGreen}1A`, paddingVertical: 2, paddingHorizontal: spacing.xs, borderRadius: radii.pill },
+  tutorEvalText:   { fontSize: 10, fontWeight: fontWeights.bold, color: palette.brandGreen },
+  tutorChevron:    { fontSize: fontSizes.label, color: palette.muted },
+  tutorBody:       { padding: spacing.md, gap: spacing.sm },
+  tutorOpening:    { fontSize: fontSizes.caption, fontWeight: fontWeights.bold, color: palette.muted, textTransform: 'uppercase', letterSpacing: 1 },
+  tutorTip:        { fontSize: fontSizes.caption, color: palette.ink, lineHeight: 20 },
+  tutorSuggestion: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: spacing.xxs },
+  tutorSugLabel:   { fontSize: fontSizes.caption, fontWeight: fontWeights.semibold, color: palette.muted },
+  tutorSugMove:    { backgroundColor: palette.ink, paddingVertical: 3, paddingHorizontal: spacing.sm, borderRadius: radii.sm },
+  tutorSugMoveText:{ fontSize: fontSizes.caption, fontWeight: fontWeights.bold, color: palette.white },
 
-  movesLabel:     { },
-  movesLabelText: { fontSize: 10, fontWeight: fontWeights.bold, color: palette.muted, textTransform: 'uppercase', letterSpacing: 1.2 },
-  moves:          { paddingVertical: spacing.sm, gap: spacing.xs, alignItems: 'center', backgroundColor: theme.colors.surface, borderRadius: radii.sm, paddingHorizontal: spacing.md },
-  moveGroup:      { flexDirection: 'row', alignItems: 'center', gap: spacing.xxs },
-  moveNum:        { fontSize: fontSizes.caption, color: palette.muted, minWidth: 18 },
-  moveToken:      { paddingVertical: spacing.xxs, paddingHorizontal: spacing.xs, backgroundColor: palette.backgroundSoft, borderRadius: radii.sm },
-  moveTokenBlack: { backgroundColor: palette.ink },
-  moveText:       { fontSize: fontSizes.caption, fontWeight: fontWeights.bold, color: palette.ink },
+  /* Move history */
+  movesSection: { gap: spacing.xs },
+  movesLabel:   { fontSize: 9, fontWeight: fontWeights.bold, color: palette.muted, textTransform: 'uppercase', letterSpacing: 1.5 },
+  movesList:    { gap: spacing.xs, paddingVertical: spacing.xs, alignItems: 'center', backgroundColor: theme.colors.surface, borderRadius: radii.sm, paddingHorizontal: spacing.sm, borderWidth: 1, borderColor: palette.border },
+  moveGroup:    { flexDirection: 'row', alignItems: 'center', gap: spacing.xxs },
+  moveNum:      { fontSize: fontSizes.caption, color: palette.muted, minWidth: 20, textAlign: 'right' },
+  moveChip:     { paddingVertical: 3, paddingHorizontal: spacing.xs, backgroundColor: theme.colors.background, borderRadius: radii.sm, borderWidth: 1, borderColor: palette.border },
+  moveChipBlack:{ backgroundColor: palette.ink, borderColor: palette.ink },
+  moveChipText: { fontSize: fontSizes.caption, fontWeight: fontWeights.bold, color: palette.ink },
 
-  footer: {
-    flexDirection: 'row', gap: spacing.xs,
-    paddingHorizontal: spacing.md, paddingVertical: spacing.md, paddingBottom: spacing.lg,
-    backgroundColor: palette.ink,
-  },
-  ctrlBtn: {
-    flex: 1, alignItems: 'center', justifyContent: 'center',
-    gap: spacing.xxs, paddingVertical: spacing.sm,
-    backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: radii.md, minHeight: 54,
-  },
-  ctrlBtnResign:  { backgroundColor: 'rgba(214,69,69,0.15)' },
-  ctrlLabel:      { fontSize: 9, fontWeight: fontWeights.bold, color: 'rgba(255,255,255,0.5)' },
-  ctrlLabelResign: { color: palette.error },
+  /* Footer */
+  footer:         { flexDirection: 'row', gap: spacing.xs, paddingHorizontal: spacing.md, paddingVertical: spacing.md, paddingBottom: spacing.lg, backgroundColor: palette.ink },
+  ctrlBtn:        { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.xxs, paddingVertical: spacing.sm, backgroundColor: 'rgba(255,255,255,0.07)', borderRadius: radii.md, minHeight: 56 },
+  ctrlBtnDanger:  { backgroundColor: 'rgba(214,69,69,0.15)' },
+  ctrlBtnPressed: { opacity: 0.7 },
+  ctrlLabel:      { fontSize: 9, fontWeight: fontWeights.bold, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: 0.8 },
+  ctrlLabelDanger:{ color: palette.error },
 });
