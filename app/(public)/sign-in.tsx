@@ -3,7 +3,8 @@
  * UI/UX design by Sandith Hewage (Y STEM and Chess)
  */
 
-import { useState } from 'react';
+import { router } from 'expo-router';
+import { useRef, useState } from 'react';
 import {
   Animated,
   Image,
@@ -149,8 +150,8 @@ export default function SignInRoute() {
             </Animated.View>
 
             <View style={s.signupRow}>
-              <Text style={s.signupHint}>New here? </Text>
-              <Pressable hitSlop={8}>
+              <Text style={s.signupHint}>New here?  </Text>
+              <Pressable hitSlop={8} onPress={() => router.push('/sign-up' as never)}>
                 <Text style={s.signupLink}>Create account</Text>
               </Pressable>
             </View>
