@@ -13,7 +13,13 @@ type TabIconProps = { focused: boolean; label: string; emoji: string };
 
 function TabIcon({ focused, emoji }: TabIconProps) {
   return (
-    <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.45, transform: [{ scale: focused ? 1.05 : 1 }] }}>
+    <Text
+      style={{
+        fontSize: 20,
+        opacity: focused ? 1 : 0.45,
+        transform: [{ scale: focused ? 1.05 : 1 }],
+      }}
+    >
       {emoji}
     </Text>
   );
@@ -24,7 +30,7 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor:   palette.ink,
+        tabBarActiveTintColor: palette.ink,
         tabBarInactiveTintColor: palette.muted,
         tabBarLabelStyle: {
           fontSize: fontSizes.caption - 1,
@@ -46,28 +52,32 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: props => <TabIcon {...props} label="Home" emoji="🏠" />,
+          tabBarIcon: (props) => <TabIcon {...props} label="Home" emoji="🏠" />,
         }}
       />
       <Tabs.Screen
         name="learn"
         options={{
           title: 'Learn',
-          tabBarIcon: props => <TabIcon {...props} label="Learn" emoji="📚" />,
+          tabBarIcon: (props) => (
+            <TabIcon {...props} label="Learn" emoji="📚" />
+          ),
         }}
       />
       <Tabs.Screen
         name="play"
         options={{
           title: 'Play',
-          tabBarIcon: props => <TabIcon {...props} label="Play" emoji="♟" />,
+          tabBarIcon: (props) => <TabIcon {...props} label="Play" emoji="♟" />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: props => <TabIcon {...props} label="Profile" emoji="👤" />,
+          tabBarIcon: (props) => (
+            <TabIcon {...props} label="Profile" emoji="👤" />
+          ),
         }}
       />
     </Tabs>

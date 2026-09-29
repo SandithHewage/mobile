@@ -3,7 +3,7 @@
  * UI/UX design by Sandith Hewage (Y STEM and Chess)
  */
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import {
   Animated,
   Image,
@@ -19,31 +19,56 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { theme } from '@/design/theme';
-import { fontSizes, fontWeights, palette, radii, spacing } from '@/design/tokens';
+import {
+  fontSizes,
+  fontWeights,
+  palette,
+  radii,
+  spacing,
+} from '@/design/tokens';
 import { useSession } from '@/providers/SessionProvider';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const chessPiecePattern = require('@/assets/images/chess-piece-pattern.png');
 
 export default function SignInRoute() {
   const { mockSignInAs } = useSession();
-  const [username,        setUsername]        = useState('');
-  const [password,        setPassword]        = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [usernameFocused, setUsernameFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
-  const [showPassword,    setShowPassword]    = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const btnScale = useRef(new Animated.Value(1)).current;
-  const pressIn  = () => Animated.spring(btnScale, { toValue: 0.97, useNativeDriver: true, speed: 50, bounciness: 4 }).start();
-  const pressOut = () => Animated.spring(btnScale, { toValue: 1,    useNativeDriver: true, speed: 50, bounciness: 4 }).start();
+  const [btnScale] = useState(() => new Animated.Value(1));
+  const pressIn = () =>
+    Animated.spring(btnScale, {
+      toValue: 0.97,
+      useNativeDriver: true,
+      speed: 50,
+      bounciness: 4,
+    }).start();
+  const pressOut = () =>
+    Animated.spring(btnScale, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 50,
+      bounciness: 4,
+    }).start();
 
   return (
     <SafeAreaView style={s.safe}>
       {/* ── Patterned Background ──────────────── */}
-      <Image accessible={false} resizeMode="cover" source={chessPiecePattern} style={s.pattern} />
+      <Image
+        accessible={false}
+        resizeMode="cover"
+        source={chessPiecePattern}
+        style={s.pattern}
+      />
       <View pointerEvents="none" style={s.patternFade} />
 
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={s.kav}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={s.kav}
+      >
         <ScrollView
           contentContainerStyle={s.scroll}
           keyboardShouldPersistTaps="handled"
@@ -97,7 +122,11 @@ export default function SignInRoute() {
                   style={[s.fieldInput, { flex: 1 }]}
                   value={password}
                 />
-                <Pressable hitSlop={10} onPress={() => setShowPassword(v => !v)} style={s.eyeBtn}>
+                <Pressable
+                  hitSlop={10}
+                  onPress={() => setShowPassword((v) => !v)}
+                  style={s.eyeBtn}
+                >
                   <Text style={s.eyeIcon}>{showPassword ? '🙈' : '👁'}</Text>
                 </Pressable>
               </View>
@@ -115,13 +144,15 @@ export default function SignInRoute() {
                 onPressOut={pressOut}
                 style={s.enterBtn}
               >
-                <Text style={s.enterBtnText}>Sign In  →</Text>
+                <Text style={s.enterBtnText}>Sign In →</Text>
               </Pressable>
             </Animated.View>
 
             <View style={s.signupRow}>
-              <Text style={s.signupHint}>New here?  </Text>
-              <Pressable hitSlop={8}><Text style={s.signupLink}>Create account</Text></Pressable>
+              <Text style={s.signupHint}>New here? </Text>
+              <Pressable hitSlop={8}>
+                <Text style={s.signupLink}>Create account</Text>
+              </Pressable>
             </View>
           </View>
 
@@ -133,14 +164,23 @@ export default function SignInRoute() {
               <View style={s.devLine} />
             </View>
             <View style={s.devRow}>
-              {(['student', 'mentor'] as const).map(role => (
+              {(['student', 'mentor'] as const).map((role) => (
                 <Pressable
                   key={role}
+                  accessibilityLabel={`Continue as ${role}`}
+                  accessibilityRole="button"
                   onPress={() => mockSignInAs(role)}
-                  style={({ pressed }) => [s.devBtn, pressed && s.devBtnPressed]}
+                  style={({ pressed }) => [
+                    s.devBtn,
+                    pressed && s.devBtnPressed,
+                  ]}
                 >
-                  <Text style={s.devBtnIcon}>{role === 'student' ? '🎒' : '🎓'}</Text>
-                  <Text style={s.devBtnText}>{role === 'student' ? 'Student' : 'Mentor'}</Text>
+                  <Text style={s.devBtnIcon}>
+                    {role === 'student' ? '🎒' : '🎓'}
+                  </Text>
+                  <Text style={s.devBtnText}>
+                    {role === 'student' ? 'Student' : 'Mentor'}
+                  </Text>
                 </Pressable>
               ))}
             </View>
@@ -160,48 +200,163 @@ const SHADOW = {
 } as const;
 
 const s = StyleSheet.create({
-  safe:          { flex: 1, backgroundColor: theme.colors.background },
-  pattern:       { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', opacity: 0.3 },
-  patternFade:   { position: 'absolute', bottom: 0, left: 0, right: 0, height: '60%', backgroundColor: theme.colors.background, opacity: 0.9 },
-  kav:           { flex: 1 },
-  scroll:        { flexGrow: 1, justifyContent: 'center', paddingHorizontal: spacing.lg, paddingVertical: spacing.xxl, gap: spacing.lg },
+  safe: { flex: 1, backgroundColor: theme.colors.background },
+  pattern: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: '100%',
+    height: '100%',
+    opacity: 0.3,
+  },
+  patternFade: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '60%',
+    backgroundColor: theme.colors.background,
+    opacity: 0.9,
+  },
+  kav: { flex: 1 },
+  scroll: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.xxl,
+    gap: spacing.lg,
+  },
 
-  brand:         { alignItems: 'center', gap: spacing.xs },
-  brandCircle:   { width: 72, height: 72, borderRadius: radii.pill, backgroundColor: palette.ink, alignItems: 'center', justifyContent: 'center', ...SHADOW },
-  brandIcon:     { fontSize: 34 },
-  brandTitle:    { fontSize: fontSizes.display, fontWeight: fontWeights.bold, color: palette.ink, letterSpacing: -1 },
-  brandSub:      { fontSize: fontSizes.label, color: palette.gray, fontWeight: fontWeights.medium, marginTop: -4 },
+  brand: { alignItems: 'center', gap: spacing.xs },
+  brandCircle: {
+    width: 72,
+    height: 72,
+    borderRadius: radii.pill,
+    backgroundColor: palette.ink,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...SHADOW,
+  },
+  brandIcon: { fontSize: 34 },
+  brandTitle: {
+    fontSize: fontSizes.display,
+    fontWeight: fontWeights.bold,
+    color: palette.ink,
+    letterSpacing: -1,
+  },
+  brandSub: {
+    fontSize: fontSizes.label,
+    color: palette.gray,
+    fontWeight: fontWeights.medium,
+    marginTop: -4,
+  },
 
-  card:          { backgroundColor: theme.colors.surfaceStrong, borderRadius: radii.xl, borderWidth: 1, borderColor: palette.border, padding: spacing.lg, gap: spacing.md, ...SHADOW },
-  cardHeader:    { gap: 2 },
-  cardTitle:     { fontSize: fontSizes.heading, fontWeight: fontWeights.bold, color: palette.ink },
-  cardSub:       { fontSize: fontSizes.caption, color: palette.muted },
+  card: {
+    backgroundColor: theme.colors.surfaceStrong,
+    borderRadius: radii.xl,
+    borderWidth: 1,
+    borderColor: palette.border,
+    padding: spacing.lg,
+    gap: spacing.md,
+    ...SHADOW,
+  },
+  cardHeader: { gap: 2 },
+  cardTitle: {
+    fontSize: fontSizes.heading,
+    fontWeight: fontWeights.bold,
+    color: palette.ink,
+  },
+  cardSub: { fontSize: fontSizes.caption, color: palette.muted },
 
-  fields:        { gap: spacing.sm },
-  field:         { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, borderWidth: 1.5, borderColor: palette.border, borderRadius: radii.md, backgroundColor: theme.colors.background, paddingHorizontal: spacing.md, minHeight: 52 },
-  fieldFocused:  { borderColor: palette.brandGreen, backgroundColor: palette.backgroundSoft },
-  fieldIcon:     { fontSize: 16 },
-  fieldInput:    { flex: 1, fontSize: fontSizes.body, color: palette.ink, paddingVertical: spacing.sm },
-  eyeBtn:        { padding: spacing.xs },
-  eyeIcon:       { fontSize: 15 },
+  fields: { gap: spacing.sm },
+  field: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    borderWidth: 1.5,
+    borderColor: palette.border,
+    borderRadius: radii.md,
+    backgroundColor: theme.colors.background,
+    paddingHorizontal: spacing.md,
+    minHeight: 52,
+  },
+  fieldFocused: {
+    borderColor: palette.brandGreen,
+    backgroundColor: palette.backgroundSoft,
+  },
+  fieldIcon: { fontSize: 16 },
+  fieldInput: {
+    flex: 1,
+    fontSize: fontSizes.body,
+    color: palette.ink,
+    paddingVertical: spacing.sm,
+  },
+  eyeBtn: { padding: spacing.xs },
+  eyeIcon: { fontSize: 15 },
 
-  forgotRow:     { alignSelf: 'flex-end' },
-  forgotText:    { fontSize: fontSizes.caption, color: palette.brandGreen, fontWeight: fontWeights.semibold },
+  forgotRow: { alignSelf: 'flex-end' },
+  forgotText: {
+    fontSize: fontSizes.caption,
+    color: palette.brandGreen,
+    fontWeight: fontWeights.semibold,
+  },
 
-  enterBtn:      { backgroundColor: palette.ink, borderRadius: radii.pill, minHeight: 52, alignItems: 'center', justifyContent: 'center' },
-  enterBtnText:  { fontSize: fontSizes.label, fontWeight: fontWeights.bold, color: palette.white, letterSpacing: 0.3 },
+  enterBtn: {
+    backgroundColor: palette.ink,
+    borderRadius: radii.pill,
+    minHeight: 52,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  enterBtnText: {
+    fontSize: fontSizes.label,
+    fontWeight: fontWeights.bold,
+    color: palette.white,
+    letterSpacing: 0.3,
+  },
 
-  signupRow:     { flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
-  signupHint:    { fontSize: fontSizes.caption, color: palette.muted },
-  signupLink:    { fontSize: fontSizes.caption, color: palette.brandGreen, fontWeight: fontWeights.bold },
+  signupRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  signupHint: { fontSize: fontSizes.caption, color: palette.muted },
+  signupLink: {
+    fontSize: fontSizes.caption,
+    color: palette.brandGreen,
+    fontWeight: fontWeights.bold,
+  },
 
-  dev:           { gap: spacing.sm },
-  devDivider:    { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  devLine:       { flex: 1, height: 1, backgroundColor: palette.border },
-  devLabel:      { fontSize: 9, fontWeight: fontWeights.bold, color: palette.muted, textTransform: 'uppercase', letterSpacing: 1.5 },
-  devRow:        { flexDirection: 'row', gap: spacing.sm },
-  devBtn:        { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.xs, borderRadius: radii.md, borderWidth: 1, borderColor: palette.border, borderStyle: 'dashed', paddingVertical: spacing.sm },
+  dev: { gap: spacing.sm },
+  devDivider: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  devLine: { flex: 1, height: 1, backgroundColor: palette.border },
+  devLabel: {
+    fontSize: 9,
+    fontWeight: fontWeights.bold,
+    color: palette.muted,
+    textTransform: 'uppercase',
+    letterSpacing: 1.5,
+  },
+  devRow: { flexDirection: 'row', gap: spacing.sm },
+  devBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xs,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: palette.border,
+    borderStyle: 'dashed',
+    paddingVertical: spacing.sm,
+  },
   devBtnPressed: { backgroundColor: palette.backgroundSoft },
-  devBtnIcon:    { fontSize: 15 },
-  devBtnText:    { fontSize: fontSizes.caption, fontWeight: fontWeights.semibold, color: palette.gray },
+  devBtnIcon: { fontSize: 15 },
+  devBtnText: {
+    fontSize: fontSizes.caption,
+    fontWeight: fontWeights.semibold,
+    color: palette.gray,
+  },
 });
