@@ -1126,6 +1126,191 @@
         color: var(--ink);
       }
 
+      /* ── Onboarding ───────────────────────────── */
+      .onboard-slide {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        padding: 60px 20px 80px;
+        text-align: center;
+      }
+      .onboard-emoji {
+        font-size: 64px;
+        margin-bottom: 20px;
+      }
+      .onboard-title {
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--ink);
+        margin-bottom: 6px;
+      }
+      .onboard-sub {
+        font-size: 10px;
+        color: var(--muted);
+        line-height: 1.5;
+        max-width: 200px;
+      }
+      .onboard-dots {
+        display: flex;
+        gap: 6px;
+        margin-top: 20px;
+      }
+      .onboard-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--border);
+      }
+      .onboard-dot.active {
+        background: var(--green);
+        width: 20px;
+        border-radius: 4px;
+      }
+      .onboard-footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 12px 16px 24px;
+        display: flex;
+        gap: 8px;
+      }
+
+      /* ── Mentor ─────────────────────────────────── */
+      .student-list-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--border);
+      }
+      .student-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .session-card {
+        background: var(--surface);
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        padding: 12px;
+        margin: 0 16px 8px;
+      }
+      .session-time {
+        font-size: 8px;
+        font-weight: 700;
+        color: var(--green);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .session-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--ink);
+        margin-top: 2px;
+      }
+      .session-meta {
+        font-size: 8px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+
+      /* ── Settings ───────────────────────────────── */
+      .toggle-track {
+        width: 32px;
+        height: 18px;
+        border-radius: 9px;
+        background: var(--border);
+        position: relative;
+        margin-left: auto;
+        flex-shrink: 0;
+      }
+      .toggle-track.on {
+        background: var(--green);
+      }
+      .toggle-thumb {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #fff;
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      }
+      .toggle-track.on .toggle-thumb {
+        left: auto;
+        right: 2px;
+      }
+      .inventory-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        padding: 0 16px;
+      }
+      .inv-item {
+        background: var(--surface);
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        padding: 10px 6px;
+        text-align: center;
+      }
+      .inv-item.owned {
+        border-color: var(--green);
+        background: rgba(127,204,38,0.04);
+      }
+      .inv-emoji {
+        font-size: 24px;
+        display: block;
+      }
+      .inv-name {
+        font-size: 7px;
+        font-weight: 600;
+        color: var(--ink);
+        margin-top: 4px;
+      }
+      .inv-price {
+        font-size: 7px;
+        color: var(--muted);
+        margin-top: 1px;
+      }
+      .notif-item {
+        display: flex;
+        gap: 10px;
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--border);
+        align-items: flex-start;
+      }
+      .notif-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--green);
+        flex-shrink: 0;
+        margin-top: 4px;
+      }
+      .notif-dot.read {
+        background: var(--border);
+      }
+      .notif-text {
+        font-size: 9px;
+        color: var(--ink);
+        line-height: 1.4;
+      }
+      .notif-time {
+        font-size: 7px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+
       /* ── Footer note ───────────────────────────── */
       .footer-note {
         text-align: center;
@@ -1145,7 +1330,7 @@
   ════════════════════════════════════════ -->
     <div class="page-header">
       <h1>Y <span>STEM</span> and Chess</h1>
-      <p>Mobile App — All Screens</p>
+      <p>Mobile App — 21 Screens</p>
       <span class="tag">design/sandith-ui-screens · React Native + Expo</span>
     </div>
 
@@ -2707,11 +2892,712 @@
     </div>
     <!-- /profile -->
 
+    <!-- ════════════════════════════════════════
+       AUTH FLOWS
+    ════════════════════════════════════════ -->
+    <div class="section-title">Auth — Sign Up</div>
+    <div class="phones-row">
+      <!-- Sign Up -->
+      <div class="phone-wrap">
+        <div class="phone-label">Sign Up</div>
+        <div class="phone">
+          <div class="screen">
+            <div class="signin-pattern"></div>
+            <div style="height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <div style="font-size: 36px">♟</div>
+            </div>
+            <div class="signin-card" style="border-radius: 28px 28px 0 0;">
+              <div class="signin-logo">
+                <div class="logo-circle">♟</div>
+                <h1>Create Account</h1>
+                <p>Join Y STEM and Chess</p>
+              </div>
+              <div class="field">
+                <div class="field-label">First Name</div>
+                <div class="field-value">Alex</div>
+              </div>
+              <div class="field">
+                <div class="field-label">Last Name</div>
+                <div class="field-value">Chen</div>
+              </div>
+              <div class="field">
+                <div class="field-label">Email</div>
+                <div class="field-value">alex@example.com</div>
+              </div>
+              <div class="field">
+                <div class="field-label">Username</div>
+                <div class="field-value">alexchen</div>
+              </div>
+              <div class="field">
+                <div class="field-label">Password</div>
+                <div class="field-value">••••••••</div>
+              </div>
+              <div style="display: flex; gap: 6px; margin-top: 8px;">
+                <div style="flex: 1; background: var(--green); border-radius: 100px; padding: 10px; text-align: center; font-size: 10px; font-weight: 700; color: var(--ink);">🎒 Student</div>
+                <div style="flex: 1; background: var(--bg); border: 1.5px solid var(--border); border-radius: 100px; padding: 10px; text-align: center; font-size: 10px; font-weight: 600; color: var(--muted);">🧑‍🏫 Mentor</div>
+              </div>
+              <div class="btn-primary-block" style="margin-top: 10px;">Create Account ♟</div>
+              <div class="signin-links">
+                <span class="link">Already have an account? Sign in</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Forgot Password -->
+      <div class="phone-wrap">
+        <div class="phone-label">Forgot Password</div>
+        <div class="phone">
+          <div class="screen">
+            <div class="signin-pattern"></div>
+            <div style="height: 160px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <div style="font-size: 48px">🔑</div>
+            </div>
+            <div class="signin-card" style="border-radius: 28px 28px 0 0;">
+              <div class="signin-logo">
+                <h1>Reset Password</h1>
+                <p>Enter your email to receive a reset link</p>
+              </div>
+              <div class="field">
+                <div class="field-label">Email Address</div>
+                <div class="field-value">alex@example.com</div>
+              </div>
+              <div class="btn-primary-block">Send Reset Link</div>
+              <div class="signin-links" style="margin-top: 16px;">
+                <span class="link">← Back to Sign In</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reset Password -->
+      <div class="phone-wrap">
+        <div class="phone-label">Reset Password</div>
+        <div class="phone">
+          <div class="screen">
+            <div class="signin-pattern"></div>
+            <div style="height: 160px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <div style="font-size: 48px">🔒</div>
+            </div>
+            <div class="signin-card" style="border-radius: 28px 28px 0 0;">
+              <div class="signin-logo">
+                <h1>New Password</h1>
+                <p>Choose a strong password</p>
+              </div>
+              <div class="field">
+                <div class="field-label">New Password</div>
+                <div class="field-value">••••••••••</div>
+              </div>
+              <div class="field">
+                <div class="field-label">Confirm Password</div>
+                <div class="field-value">••••••••••</div>
+              </div>
+              <div style="margin-top: 8px;">
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                  <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--green); font-size: 7px; display: flex; align-items: center; justify-content: center; color: #fff;">✓</div>
+                  <span style="font-size: 8px; color: var(--gray);">At least 8 characters</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                  <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--green); font-size: 7px; display: flex; align-items: center; justify-content: center; color: #fff;">✓</div>
+                  <span style="font-size: 8px; color: var(--gray);">Contains a number</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--border); font-size: 7px; display: flex; align-items: center; justify-content: center; color: var(--muted);">·</div>
+                  <span style="font-size: 8px; color: var(--muted);">Contains a special character</span>
+                </div>
+              </div>
+              <div class="btn-primary-block" style="margin-top: 12px;">Update Password</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /auth flows -->
+
+    <!-- ════════════════════════════════════════
+       ONBOARDING
+    ════════════════════════════════════════ -->
+    <div class="section-title">Onboarding</div>
+    <div class="phones-row">
+      <!-- Welcome Slide 1 -->
+      <div class="phone-wrap">
+        <div class="phone-label">Welcome — Slide 1</div>
+        <div class="phone">
+          <div class="screen screen-bg">
+            <div class="onboard-slide">
+              <div class="onboard-emoji">♟</div>
+              <div class="onboard-title">Learn Chess</div>
+              <div class="onboard-sub">Master every piece with bite-sized lessons designed for beginners and beyond.</div>
+              <div class="onboard-dots">
+                <div class="onboard-dot active"></div>
+                <div class="onboard-dot"></div>
+                <div class="onboard-dot"></div>
+              </div>
+            </div>
+            <div class="onboard-footer">
+              <div class="btn-secondary" style="flex: 1;">Skip</div>
+              <div class="btn-green-pill" style="flex: 2;">Next →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Welcome Slide 2 -->
+      <div class="phone-wrap">
+        <div class="phone-label">Welcome — Slide 2</div>
+        <div class="phone">
+          <div class="screen screen-bg">
+            <div class="onboard-slide">
+              <div class="onboard-emoji">🧩</div>
+              <div class="onboard-title">Solve Puzzles</div>
+              <div class="onboard-sub">Sharpen your skills with thousands of puzzles. Earn XP, climb the rating ladder.</div>
+              <div class="onboard-dots">
+                <div class="onboard-dot"></div>
+                <div class="onboard-dot active"></div>
+                <div class="onboard-dot"></div>
+              </div>
+            </div>
+            <div class="onboard-footer">
+              <div class="btn-secondary" style="flex: 1;">Skip</div>
+              <div class="btn-green-pill" style="flex: 2;">Next →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Welcome Slide 3 -->
+      <div class="phone-wrap">
+        <div class="phone-label">Welcome — Slide 3</div>
+        <div class="phone">
+          <div class="screen screen-bg">
+            <div class="onboard-slide">
+              <div class="onboard-emoji">🧑‍🏫</div>
+              <div class="onboard-title">Get Mentored</div>
+              <div class="onboard-sub">Connect with real mentors who guide you through STEM and chess — one session at a time.</div>
+              <div class="onboard-dots">
+                <div class="onboard-dot"></div>
+                <div class="onboard-dot"></div>
+                <div class="onboard-dot active"></div>
+              </div>
+            </div>
+            <div class="onboard-footer">
+              <div class="btn-green-pill" style="flex: 1;">Get Started ♟</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /onboarding -->
+
+    <!-- ════════════════════════════════════════
+       MENTOR EXPERIENCE
+    ════════════════════════════════════════ -->
+    <div class="section-title">Mentor — Dashboard & Students</div>
+    <div class="phones-row">
+      <!-- Mentor Home -->
+      <div class="phone-wrap">
+        <div class="phone-label">Mentor Home</div>
+        <div class="phone">
+          <div class="screen screen-bg">
+            <div class="status-bar">9:41<span>●●●</span></div>
+            <div style="padding: 0 16px 10px;">
+              <div style="font-size: 7px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px;">MENTOR DASHBOARD</div>
+              <div style="font-size: 15px; font-weight: 800; color: var(--ink);">Welcome, Sarah 👋</div>
+            </div>
+
+            <!-- Upcoming Sessions -->
+            <div style="font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); padding: 8px 16px 6px;">Upcoming Sessions</div>
+            <div class="session-card">
+              <div class="session-time">Today · 3:00 PM</div>
+              <div class="session-title">Chess Lesson — Knight Tactics</div>
+              <div class="session-meta">with Alex Chen · 30 min</div>
+              <div class="pill-btn" style="margin-top: 8px; padding: 8px;">Join Session</div>
+            </div>
+            <div class="session-card">
+              <div class="session-time" style="color: var(--muted);">Tomorrow · 4:00 PM</div>
+              <div class="session-title">Math Tutoring — Fractions</div>
+              <div class="session-meta">with Jordan Lee · 45 min</div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="stats-bar" style="margin-top: 8px;">
+              <div class="stat-cell">
+                <div class="stat-val">8</div>
+                <div class="stat-lbl">🎓 Students</div>
+              </div>
+              <div class="stat-cell">
+                <div class="stat-val">24</div>
+                <div class="stat-lbl">📅 Sessions</div>
+              </div>
+              <div class="stat-cell">
+                <div class="stat-val">4.9</div>
+                <div class="stat-lbl">⭐ Rating</div>
+              </div>
+            </div>
+
+            <div class="tab-bar">
+              <div class="tab-item"><span class="tab-icon active">🏠</span><span class="tab-lbl active">Home</span></div>
+              <div class="tab-item"><span class="tab-icon">👥</span><span class="tab-lbl">Students</span></div>
+              <div class="tab-item"><span class="tab-icon">📅</span><span class="tab-lbl">Schedule</span></div>
+              <div class="tab-item"><span class="tab-icon">👤</span><span class="tab-lbl">Profile</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Student List -->
+      <div class="phone-wrap">
+        <div class="phone-label">Student List</div>
+        <div class="phone">
+          <div class="screen screen-bg">
+            <div class="status-bar">9:41<span>●●●</span></div>
+            <div style="padding: 0 16px 10px;">
+              <div class="header-sup">MENTOR</div>
+              <div class="header-title sm">My Students</div>
+            </div>
+
+            <div class="student-list-item">
+              <div class="student-avatar" style="background: var(--green); color: var(--ink);">A</div>
+              <div class="flex1">
+                <div style="font-size: 10px; font-weight: 700; color: var(--ink);">Alex Chen</div>
+                <div style="font-size: 8px; color: var(--muted);">Level 3 · 250 XP · 5🔥 streak</div>
+              </div>
+              <div class="chip chip-green" style="font-size: 7px;">Active</div>
+            </div>
+            <div class="student-list-item">
+              <div class="student-avatar" style="background: var(--yellow); color: var(--ink);">J</div>
+              <div class="flex1">
+                <div style="font-size: 10px; font-weight: 700; color: var(--ink);">Jordan Lee</div>
+                <div style="font-size: 8px; color: var(--muted);">Level 5 · 580 XP · 12🔥 streak</div>
+              </div>
+              <div class="chip chip-green" style="font-size: 7px;">Active</div>
+            </div>
+            <div class="student-list-item">
+              <div class="student-avatar" style="background: var(--greenBg); color: var(--ink);">M</div>
+              <div class="flex1">
+                <div style="font-size: 10px; font-weight: 700; color: var(--ink);">Maya Patel</div>
+                <div style="font-size: 8px; color: var(--muted);">Level 2 · 120 XP · 2🔥 streak</div>
+              </div>
+              <div class="chip chip-green" style="font-size: 7px;">Active</div>
+            </div>
+            <div class="student-list-item">
+              <div class="student-avatar" style="background: var(--border); color: var(--gray);">R</div>
+              <div class="flex1">
+                <div style="font-size: 10px; font-weight: 700; color: var(--ink);">Ryan Kim</div>
+                <div style="font-size: 8px; color: var(--muted);">Level 1 · 40 XP · 0 streak</div>
+              </div>
+              <div class="chip chip-ink" style="font-size: 7px;">Inactive</div>
+            </div>
+            <div class="student-list-item">
+              <div class="student-avatar" style="background: #E8D5F5; color: #6B21A8;">S</div>
+              <div class="flex1">
+                <div style="font-size: 10px; font-weight: 700; color: var(--ink);">Sophia Davis</div>
+                <div style="font-size: 8px; color: var(--muted);">Level 4 · 410 XP · 8🔥 streak</div>
+              </div>
+              <div class="chip chip-green" style="font-size: 7px;">Active</div>
+            </div>
+            <div class="student-list-item" style="border: none;">
+              <div class="student-avatar" style="background: #D5E8F5; color: #1E40AF;">E</div>
+              <div class="flex1">
+                <div style="font-size: 10px; font-weight: 700; color: var(--ink);">Ethan Brooks</div>
+                <div style="font-size: 8px; color: var(--muted);">Level 3 · 290 XP · 3🔥 streak</div>
+              </div>
+              <div class="chip chip-green" style="font-size: 7px;">Active</div>
+            </div>
+
+            <div class="tab-bar">
+              <div class="tab-item"><span class="tab-icon">🏠</span><span class="tab-lbl">Home</span></div>
+              <div class="tab-item"><span class="tab-icon active">👥</span><span class="tab-lbl active">Students</span></div>
+              <div class="tab-item"><span class="tab-icon">📅</span><span class="tab-lbl">Schedule</span></div>
+              <div class="tab-item"><span class="tab-icon">👤</span><span class="tab-lbl">Profile</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mentor Profile -->
+      <div class="phone-wrap">
+        <div class="phone-label">Mentor Profile</div>
+        <div class="phone">
+          <div class="screen screen-bg">
+            <div class="status-bar">9:41<span>●●●</span></div>
+
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 0 12px;">
+              <div class="avatar-ring"><div class="avatar-inner" style="background: var(--yellow);">S</div></div>
+              <div style="font-size: 14px; font-weight: 800; color: var(--ink);">Sarah Johnson</div>
+              <div class="chip chip-green">🧑‍🏫 Mentor</div>
+              <div style="font-size: 8px; color: var(--muted); text-align: center; max-width: 200px; line-height: 1.4;">Chess coach & math tutor. Passionate about helping kids discover STEM through play.</div>
+            </div>
+
+            <div class="stats-bar">
+              <div class="stat-cell">
+                <div class="stat-val">8</div>
+                <div class="stat-lbl">🎓 Students</div>
+              </div>
+              <div class="stat-cell">
+                <div class="stat-val">124</div>
+                <div class="stat-lbl">📅 Sessions</div>
+              </div>
+              <div class="stat-cell">
+                <div class="stat-val">4.9</div>
+                <div class="stat-lbl">⭐ Rating</div>
+              </div>
+            </div>
+
+            <div style="padding: 8px 16px 0; display: flex; justify-content: space-between; align-items: center;">
+              <div style="font-size: 9px; font-weight: 700; color: var(--ink);">Specialties</div>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 4px; padding: 6px 16px;">
+              <div class="theme-pill">Chess Strategy</div>
+              <div class="theme-pill">Knight Tactics</div>
+              <div class="theme-pill">Math / Fractions</div>
+              <div class="theme-pill">Beginner Friendly</div>
+            </div>
+
+            <div class="menu-card mt8" style="margin-bottom: 8px;">
+              <div class="menu-row">
+                <div class="menu-icon">✏️</div>
+                <div class="flex1"><div class="menu-lbl">Edit Profile</div><div class="menu-sub">Bio, specialties, photo</div></div>
+                <span class="arrow">›</span>
+              </div>
+              <div class="menu-row">
+                <div class="menu-icon">📅</div>
+                <div class="flex1"><div class="menu-lbl">Availability</div><div class="menu-sub">Set your schedule</div></div>
+                <span class="arrow">›</span>
+              </div>
+              <div class="menu-row" style="border: none;">
+                <div class="menu-icon">📊</div>
+                <div class="flex1"><div class="menu-lbl">My Stats</div><div class="menu-sub">Session history & feedback</div></div>
+                <span class="arrow">›</span>
+              </div>
+            </div>
+
+            <div class="tab-bar">
+              <div class="tab-item"><span class="tab-icon">🏠</span></div>
+              <div class="tab-item"><span class="tab-icon">👥</span></div>
+              <div class="tab-item"><span class="tab-icon">📅</span></div>
+              <div class="tab-item"><span class="tab-icon active">👤</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Session View -->
+      <div class="phone-wrap">
+        <div class="phone-label">Live Session</div>
+        <div class="phone">
+          <div class="screen" style="background: var(--ink);">
+            <div class="dark-header" style="padding-top: 36px;">
+              <div class="back-btn">←</div>
+              <div class="flex1 col" style="align-items: center;">
+                <div style="font-size: 11px; font-weight: 800; color: #fff;">Chess Session</div>
+                <div style="font-size: 8px; color: rgba(255,255,255,0.4);">with Alex Chen · 12:34 elapsed</div>
+              </div>
+              <div class="chip" style="background: rgba(214,69,69,0.2); color: #d64545; font-size: 8px;">● LIVE</div>
+            </div>
+
+            <!-- Board -->
+            <div style="padding: 8px 12px;">
+              <div style="border-radius: 8px; overflow: hidden;">
+                <div class="chess-board">
+                  <div class="cell-light"></div><div class="cell-dark"></div><div class="cell-light"></div><div class="cell-dark"></div><div class="cell-light"></div><div class="cell-dark"></div><div class="cell-light"></div><div class="cell-dark"></div>
+                  <div class="cell-dark"></div><div class="cell-light"></div><div class="cell-dark"></div><div class="cell-light"></div><div class="cell-dark"></div><div class="cell-light"></div><div class="cell-dark"></div><div class="cell-light"></div>
+                  <div class="cell-light"></div><div class="cell-dark"></div><div class="cell-light"></div><div class="cell-dark"></div><div class="cell-light"></div><div class="cell-dark"></div><div class="cell-light"></div><div class="cell-dark"></div>
+                  <div class="cell-dark"></div><div class="cell-light"></div><div class="cell-dark"></div><div class="cell-light"></div><div class="cell-dark"></div><div class="cell-light"></div><div class="cell-dark"></div><div class="cell-light"></div>
+                  <div class="cell-light"></div><div class="cell-dark"></div><div class="cell-light"></div><div class="cell-dark" style="font-size: 10px; display: flex; align-items: center; justify-content: center;">♙</div><div class="cell-light"></div><div class="cell-dark"></div><div class="cell-light"></div><div class="cell-dark"></div>
+                  <div class="cell-dark"></div><div class="cell-light"></div><div class="cell-dark"></div><div class="cell-light"></div><div class="cell-dark"></div><div class="cell-light"></div><div class="cell-dark"></div><div class="cell-light"></div>
+                  <div class="cell-light"></div><div class="cell-dark"></div><div class="cell-light"></div><div class="cell-dark"></div><div class="cell-light"></div><div class="cell-dark"></div><div class="cell-light"></div><div class="cell-dark"></div>
+                  <div class="cell-dark"></div><div class="cell-light"></div><div class="cell-dark"></div><div class="cell-light"></div><div class="cell-dark"></div><div class="cell-light"></div><div class="cell-dark"></div><div class="cell-light"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Chat / Notes area -->
+            <div style="margin: 4px 12px; background: rgba(255,255,255,0.06); border-radius: 12px; padding: 10px;">
+              <div style="font-size: 8px; font-weight: 700; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">Session Notes</div>
+              <div style="font-size: 8px; color: rgba(255,255,255,0.7); line-height: 1.5; margin-bottom: 6px;">
+                <span style="color: var(--yellow); font-weight: 600;">Sarah:</span> Great opening! Try developing your knight next.<br>
+                <span style="color: var(--green); font-weight: 600;">Alex:</span> Should I go Nf3 or Nc3?<br>
+                <span style="color: var(--yellow); font-weight: 600;">Sarah:</span> Nf3 — it controls the center and prepares to castle.
+              </div>
+              <div style="background: rgba(255,255,255,0.08); border-radius: 8px; padding: 6px 8px; font-size: 8px; color: rgba(255,255,255,0.3);">Type a message...</div>
+            </div>
+
+            <div class="dark-footer">
+              <div class="ctrl-btn">💬 Chat</div>
+              <div class="ctrl-btn">📝 Annotate</div>
+              <div class="ctrl-btn danger">End Session</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /mentor -->
+
+    <!-- ════════════════════════════════════════
+       SETTINGS & EXTRAS
+    ════════════════════════════════════════ -->
+    <div class="section-title">Settings & Extras</div>
+    <div class="phones-row">
+      <!-- Settings -->
+      <div class="phone-wrap">
+        <div class="phone-label">Settings</div>
+        <div class="phone">
+          <div class="screen screen-bg">
+            <div class="status-bar">9:41<span>●●●</span></div>
+            <div style="padding: 0 16px 10px;">
+              <div class="header-sup">ACCOUNT</div>
+              <div class="header-title sm">Settings</div>
+            </div>
+
+            <div class="menu-card" style="margin-bottom: 8px;">
+              <div class="menu-row">
+                <div class="menu-icon">🔔</div>
+                <div class="flex1"><div class="menu-lbl">Push Notifications</div></div>
+                <div class="toggle-track on"><div class="toggle-thumb"></div></div>
+              </div>
+              <div class="menu-row">
+                <div class="menu-icon">🔊</div>
+                <div class="flex1"><div class="menu-lbl">Sound Effects</div></div>
+                <div class="toggle-track on"><div class="toggle-thumb"></div></div>
+              </div>
+              <div class="menu-row">
+                <div class="menu-icon">📳</div>
+                <div class="flex1"><div class="menu-lbl">Haptic Feedback</div></div>
+                <div class="toggle-track"><div class="toggle-thumb"></div></div>
+              </div>
+              <div class="menu-row" style="border: none;">
+                <div class="menu-icon">🌙</div>
+                <div class="flex1"><div class="menu-lbl">Dark Mode</div></div>
+                <div class="toggle-track"><div class="toggle-thumb"></div></div>
+              </div>
+            </div>
+
+            <div class="menu-card" style="margin-bottom: 8px;">
+              <div class="menu-row">
+                <div class="menu-icon">🔒</div>
+                <div class="flex1"><div class="menu-lbl">Change Password</div><div class="menu-sub">Update your password</div></div>
+                <span class="arrow">›</span>
+              </div>
+              <div class="menu-row">
+                <div class="menu-icon">🌍</div>
+                <div class="flex1"><div class="menu-lbl">Language</div><div class="menu-sub">English</div></div>
+                <span class="arrow">›</span>
+              </div>
+              <div class="menu-row" style="border: none;">
+                <div class="menu-icon">📄</div>
+                <div class="flex1"><div class="menu-lbl">Privacy Policy</div></div>
+                <span class="arrow">›</span>
+              </div>
+            </div>
+
+            <div style="margin: 0 16px; background: #fff; border-radius: 12px; border: 1px solid var(--border); padding: 10px; text-align: center; font-size: 9px; font-weight: 600; color: var(--error);">Sign Out</div>
+            <div style="text-align: center; margin-top: 12px; font-size: 7px; color: var(--muted);">Y STEM and Chess v1.0.0</div>
+
+            <div class="tab-bar">
+              <div class="tab-item"><span class="tab-icon">🏠</span></div>
+              <div class="tab-item"><span class="tab-icon">📚</span></div>
+              <div class="tab-item"><span class="tab-icon">♟</span></div>
+              <div class="tab-item"><span class="tab-icon active">👤</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <div class="phone-wrap">
+        <div class="phone-label">Notifications</div>
+        <div class="phone">
+          <div class="screen screen-bg">
+            <div class="status-bar">9:41<span>●●●</span></div>
+            <div style="padding: 0 16px 10px;">
+              <div class="header-sup">INBOX</div>
+              <div class="header-title sm">Notifications</div>
+            </div>
+
+            <div class="notif-item">
+              <div class="notif-dot"></div>
+              <div class="flex1">
+                <div class="notif-text"><strong>New puzzle available!</strong> Your daily puzzle is ready. Solve it to keep your streak going.</div>
+                <div class="notif-time">2 min ago</div>
+              </div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-dot"></div>
+              <div class="flex1">
+                <div class="notif-text"><strong>Sarah scheduled a session</strong> — Chess Lesson tomorrow at 3:00 PM.</div>
+                <div class="notif-time">1 hour ago</div>
+              </div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-dot read"></div>
+              <div class="flex1">
+                <div class="notif-text">You earned the <strong>🔥 5-Day Streak</strong> badge! Keep it up.</div>
+                <div class="notif-time">Yesterday</div>
+              </div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-dot read"></div>
+              <div class="flex1">
+                <div class="notif-text">You completed <strong>Knight Forks</strong> — +40 XP added to your profile.</div>
+                <div class="notif-time">2 days ago</div>
+              </div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-dot read"></div>
+              <div class="flex1">
+                <div class="notif-text"><strong>Welcome to Y STEM!</strong> Start your first lesson to earn XP.</div>
+                <div class="notif-time">1 week ago</div>
+              </div>
+            </div>
+
+            <div class="tab-bar">
+              <div class="tab-item"><span class="tab-icon">🏠</span></div>
+              <div class="tab-item"><span class="tab-icon">📚</span></div>
+              <div class="tab-item"><span class="tab-icon">♟</span></div>
+              <div class="tab-item"><span class="tab-icon active">👤</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Profile -->
+      <div class="phone-wrap">
+        <div class="phone-label">Edit Profile</div>
+        <div class="phone">
+          <div class="screen screen-bg">
+            <div class="status-bar">9:41<span>●●●</span></div>
+            <div class="row" style="padding: 0 16px 8px; gap: 8px;">
+              <div style="font-size: 16px; color: var(--ink);">←</div>
+              <div class="flex1" style="text-align: center;">
+                <div style="font-size: 11px; font-weight: 700; color: var(--ink);">Edit Profile</div>
+              </div>
+              <div style="font-size: 9px; font-weight: 700; color: var(--green);">Save</div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 0 16px;">
+              <div class="avatar-ring"><div class="avatar-inner">A</div></div>
+              <div style="font-size: 9px; color: var(--green); font-weight: 600;">Change Photo</div>
+            </div>
+
+            <div style="padding: 0 16px;">
+              <div class="field">
+                <div class="field-label">First Name</div>
+                <div class="field-value">Alex</div>
+              </div>
+              <div class="field">
+                <div class="field-label">Last Name</div>
+                <div class="field-value">Chen</div>
+              </div>
+              <div class="field">
+                <div class="field-label">Username</div>
+                <div class="field-value">alexchen</div>
+              </div>
+              <div class="field">
+                <div class="field-label">Email</div>
+                <div class="field-value">alex@example.com</div>
+              </div>
+              <div class="field" style="min-height: 60px;">
+                <div class="field-label">Bio</div>
+                <div class="field-value">Chess enthusiast learning tactics! 🎯</div>
+              </div>
+            </div>
+
+            <div class="tab-bar">
+              <div class="tab-item"><span class="tab-icon">🏠</span></div>
+              <div class="tab-item"><span class="tab-icon">📚</span></div>
+              <div class="tab-item"><span class="tab-icon">♟</span></div>
+              <div class="tab-item"><span class="tab-icon active">👤</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inventory / Shop -->
+      <div class="phone-wrap">
+        <div class="phone-label">Inventory / Shop</div>
+        <div class="phone">
+          <div class="screen screen-bg">
+            <div class="status-bar">9:41<span>●●●</span></div>
+            <div class="header-row">
+              <div>
+                <div class="header-sup">REWARDS</div>
+                <div class="header-title sm">Inventory</div>
+              </div>
+              <div class="chip chip-yellow">🪙 450</div>
+            </div>
+
+            <div style="font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); padding: 0 16px 6px;">Board Themes</div>
+            <div class="inventory-grid">
+              <div class="inv-item owned">
+                <span class="inv-emoji">🟫</span>
+                <div class="inv-name">Classic</div>
+                <div class="inv-price" style="color: var(--green);">✓ Owned</div>
+              </div>
+              <div class="inv-item owned">
+                <span class="inv-emoji">🌊</span>
+                <div class="inv-name">Ocean</div>
+                <div class="inv-price" style="color: var(--green);">✓ Owned</div>
+              </div>
+              <div class="inv-item">
+                <span class="inv-emoji">🌲</span>
+                <div class="inv-name">Forest</div>
+                <div class="inv-price">🪙 100</div>
+              </div>
+              <div class="inv-item">
+                <span class="inv-emoji">🌙</span>
+                <div class="inv-name">Midnight</div>
+                <div class="inv-price">🪙 150</div>
+              </div>
+              <div class="inv-item">
+                <span class="inv-emoji">🍬</span>
+                <div class="inv-name">Candy</div>
+                <div class="inv-price">🪙 200</div>
+              </div>
+              <div class="inv-item">
+                <span class="inv-emoji">🔥</span>
+                <div class="inv-name">Lava</div>
+                <div class="inv-price">🪙 300</div>
+              </div>
+            </div>
+
+            <div style="font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); padding: 12px 16px 6px;">Avatars</div>
+            <div class="inventory-grid">
+              <div class="inv-item owned">
+                <span class="inv-emoji">♟</span>
+                <div class="inv-name">Pawn</div>
+                <div class="inv-price" style="color: var(--green);">✓ Owned</div>
+              </div>
+              <div class="inv-item">
+                <span class="inv-emoji">♞</span>
+                <div class="inv-name">Knight</div>
+                <div class="inv-price">🪙 250</div>
+              </div>
+              <div class="inv-item">
+                <span class="inv-emoji">♛</span>
+                <div class="inv-name">Queen</div>
+                <div class="inv-price">🪙 500</div>
+              </div>
+            </div>
+
+            <div class="tab-bar">
+              <div class="tab-item"><span class="tab-icon">🏠</span></div>
+              <div class="tab-item"><span class="tab-icon">📚</span></div>
+              <div class="tab-item"><span class="tab-icon">♟</span></div>
+              <div class="tab-item"><span class="tab-icon active">👤</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /settings & extras -->
+
     <div class="footer-note">
       <span>Y STEM and Chess</span> — Mobile UI/UX by Sandith Hewage<br />
       <span style="color: #444"
         >design/sandith-ui-screens · React Native + Expo Router</span
       >
-    </div>
   </body>
 </html>
